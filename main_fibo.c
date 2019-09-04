@@ -4,7 +4,6 @@
 
 
 #include "fibo_utils.c"
-#include "linked_utils.c"
 
 HEAP * insertnode(HEAP *, NODE *,int);
 HEAP * unionHeap(HEAP *,HEAP *);
