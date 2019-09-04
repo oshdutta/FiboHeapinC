@@ -41,6 +41,8 @@ HEAP * unionHeap(HEAP * H1,HEAP * H2)
 Hnew=makefibheap();
 Hnew.min=H1.min;
 /*concat h2 to Hnew*/
+Hnew.min.rt.lt=H2.min.lt;
+Hnew.min.rt=H2.min;	
 	if((H1.min==NULL)||(H2.min!=NULL && H2.min.key<H1.min.key))
 		Hnew.min=H2.min;
 Hnew.n=H1.n+H2.n;
