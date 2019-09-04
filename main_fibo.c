@@ -11,14 +11,40 @@ HEAP * unionHeap(HEAP *,HEAP *);
 void main()
 {
 	HEAP *H;
-	H=makefibheap();
+	NODE * x;int key;
+	int flag=0;
 	/*make choices - switch case-runs till exit command given*/
+	while(1)
+	{
+		printf("Fibonacci Heap Implementation \n 1.Make Fib Heap \n 2. Insert Node in root list \n 0. to exit");
+    	printf("select your choice :");
+    	scanf("%d", &choice);
 
+	    switch (choice)
+	    {
+	    	case 0: 
+	    	flag=1;break;
 
+		    case 1:
+		    H=makefibheap();
+
+			break;
+
+		    case 2:
+		    printf("assign the node key value");
+		    scanf("%d", &key);
+		    x=assignnode(key);
+		    H=insertnode(H,x,key);
+		    break;
+
+	    }
+	    if(flag==1)
+	    	break;
+	}
 }
 HEAP * insertnode(HEAP * H,NODE * x,int k)
 {
-x=assignnode(k);
+
 	if(H.min == NULL)
 	{
 		H.min=x;
