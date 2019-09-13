@@ -29,6 +29,7 @@ NODE *find_min_node(FIB_HEAP *H);
 void decrease_key(FIB_HEAP *H,NODE *node, int key);
 void cut(FIB_HEAP *H, NODE *node_to_be_decrease, NODE * parent_node);
 void cascading_cut(FIB_HEAP *H, NODE *parent_node);
+//delete and union missing
 
 
 FIB_HEAP *make_fib_heap()
