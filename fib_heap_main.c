@@ -29,6 +29,7 @@ NODE *find_min_node(FIB_HEAP *H);
 void decrease_key(FIB_HEAP *H,NODE *node, int key);
 void cut(FIB_HEAP *H, NODE *node_to_be_decrease, NODE * parent_node);
 void cascading_cut(FIB_HEAP *H, NODE *parent_node);
+FIB_HEAP *unionHeap(FIB_HEAP *H1,FIB_HEAP *H2);
 //delete and union missing
 
 
@@ -278,7 +279,20 @@ void decrease_key(FIB_HEAP *H, NODE *node_to_be_decrease, int new_key)
         }
     }
 }
-
+FIB_HEAP *unionHeap(FIB_HEAP *H1,FIB_HEAP *H2)
+{
+Hnew=make_fib_heap();
+Hnew.min=H1.min;
+/*concat H2 to Hnew*/
+Hnew.min.right_sibling.left_sibling=H2.min.left_sibling;
+Hnew.min.right_sibling=H2.min;
+H2.min.left_sibling=Hnew.min;
+H2.min.left_sibling.right_sibling=Hnew.min.right_sibling;    
+	if((H1.min==NULL)||(H2.min!=NULL && H2.min.key<H1.min.key))
+		Hnew.min=H2.min;
+Hnew.n=H1.n+H2.n;
+return Hnew;
+}
 int main(int argc, char **argv)
 {
     NODE *new_node, *min_node, *extracted_min, *node_to_be_decrease;
