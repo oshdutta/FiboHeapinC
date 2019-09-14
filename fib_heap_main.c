@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include <stdbool.h>
+#include<math.io>
 
 typedef struct _NODE
 {
@@ -29,7 +30,8 @@ NODE *find_min_node(FIB_HEAP *H);
 void decrease_key(FIB_HEAP *H,NODE *node, int key);
 void cut(FIB_HEAP *H, NODE *node_to_be_decrease, NODE * parent_node);
 void cascading_cut(FIB_HEAP *H, NODE *parent_node);
-//delete and union missing
+void DeleteNode(HEAP * H, NODE * x)
+
 
 
 FIB_HEAP *make_fib_heap()
@@ -277,6 +279,11 @@ void decrease_key(FIB_HEAP *H, NODE *node_to_be_decrease, int new_key)
             H->min = node_to_be_decrease;
         }
     }
+}
+void DeleteNode(HEAP * H, NODE * x)
+{
+decrease_key(H,x,-INFINITY);
+extract_min(H);
 }
 
 int main(int argc, char **argv)
