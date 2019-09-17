@@ -432,7 +432,7 @@ while(1)
                   printf("Fib heap is not created yet \n");
                 else
                 {
-                    printf("\n Decrease key of which heap? Enter no. from 0 to %d ",(h-1));
+                    printf("\n Delete node of which heap? Enter no. from 0 to %d ",(h-1));
                 scanf("%d",&h1);
                 printf("\n Enter the key to be deleted ");
                 scanf("%d",&key);
