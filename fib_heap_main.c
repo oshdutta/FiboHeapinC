@@ -82,12 +82,11 @@ NODE *find_min_node(FIB_HEAP *H)
 
     void Consolidate(FIB_HEAP *H) 
 { 
-    int temp1;
     int no_of_nodes= H->n;
-    float temp2 = (log(no_of_nodes)) / (log(2)); 
-    int temp3 = temp2; 
-    NODE * arr[temp3]; 
-    for (int i = 0; i <= temp3; i++) 
+    float cald = (log(no_of_nodes)) / (log(2)); 
+    int deg = cald; int tempdeg;
+    NODE * arr[deg]; 
+    for (int i = 0; i <= deg; i++) 
         arr[i] = NULL; 
     NODE* ptr1 = H->min; 
     NODE* ptr2; 
@@ -95,9 +94,9 @@ NODE *find_min_node(FIB_HEAP *H)
     NODE* ptr4 = ptr1; 
     do { 
         ptr4 = ptr4->right_sibling; 
-        temp1 = ptr1->degree; 
-        while (arr[temp1] != NULL) { 
-            ptr2 = arr[temp1]; 
+        tempdeg = ptr1->degree; 
+        while (arr[tempdeg] != NULL) { 
+            ptr2 = arr[tempdeg]; 
             if (ptr1->key > ptr2->key) { 
                 ptr3 = ptr1; 
                 ptr1 = ptr2; 
@@ -108,14 +107,14 @@ NODE *find_min_node(FIB_HEAP *H)
             Fibonnaci_link(H,ptr2, ptr1); 
             if (ptr1->right_sibling == ptr1) 
                 H->min = ptr1; 
-            arr[temp1] = NULL; 
-            temp1++; 
+            arr[tempdeg] = NULL; 
+            tempdeg++; 
         } 
-        arr[temp1] = ptr1; 
+        arr[tempdeg] = ptr1; 
         ptr1 = ptr1->right_sibling; 
     } while (ptr1 != H->min); 
     H->min = NULL; 
-    for (int j = 0; j <= temp3; j++) { 
+    for (int j = 0; j <= deg; j++) { 
         if (arr[j] != NULL) { 
             arr[j]->left_sibling = arr[j]; 
             arr[j]->right_sibling = arr[j]; 
