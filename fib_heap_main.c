@@ -25,8 +25,9 @@ typedef struct fibanocci_heap
 FIB_HEAP *make_fib_heap();
 void insertion(FIB_HEAP *H,NODE *new, int val);
 NODE *extract_min(FIB_HEAP *H);
-void consolidate(FIB_HEAP *H);
-void fib_heap_link(FIB_HEAP *H, NODE *y, NODE *x);
+void Consolidate(FIB_HEAP *H);
+//void fib_heap_link(FIB_HEAP *H, NODE *y, NODE *x);
+void Fibonnaci_link(FIB_HEAP *H, NODE * ptr2, NODE * ptr1) ;
 NODE *find_min_node(FIB_HEAP *H);
 int decrease_key(FIB_HEAP *H,NODE *node, int key);
 void cut(FIB_HEAP *H, NODE *node_to_be_decreased, NODE * parent_node);
@@ -79,7 +80,7 @@ NODE *find_min_node(FIB_HEAP *H)
     return H->min;
 }
 
-int cal_degree(int n)
+/*int cal_degree(int n)
 {
     int count = 0;
     while (n>0)
@@ -88,9 +89,9 @@ int cal_degree(int n)
         count++;
     }
     return count;
-}
+}*/
 
-void consolidate(FIB_HEAP *H)
+/*void consolidate(FIB_HEAP *H)
 {
     int degree,i,d;
     degree = cal_degree(H->n);
@@ -109,8 +110,8 @@ void consolidate(FIB_HEAP *H)
         while (A[d]!=NULL)
         {
             y = A[d];
-           /* printf("\n degree = %d,X =%d Y = %d \n",d, x->key, y->key);
-            printf("---------------------");*/
+           // printf("\n degree = %d,X =%d Y = %d \n",d, x->key, y->key);
+            //printf("---------------------");
             if(x->key > y->key)
             {
                 exchange_help = x;
@@ -149,9 +150,68 @@ void consolidate(FIB_HEAP *H)
             }   
         }
     }
+} */
+    void Consolidate(FIB_HEAP *H) 
+{ 
+    int temp1;
+    NODE * mini=H->min;
+    int no_of_nodes= H->n;
+    float temp2 = (log(no_of_nodes)) / (log(2)); 
+    int temp3 = temp2; 
+    NODE * arr[temp3]; 
+    for (int i = 0; i <= temp3; i++) 
+        arr[i] = NULL; 
+    NODE* ptr1 = mini; 
+    NODE* ptr2; 
+    NODE* ptr3; 
+    NODE* ptr4 = ptr1; 
+    do { 
+        ptr4 = ptr4->right_sibling; 
+        temp1 = ptr1->degree; 
+        while (arr[temp1] != NULL) { 
+            ptr2 = arr[temp1]; 
+            if (ptr1->key > ptr2->key) { 
+                ptr3 = ptr1; 
+                ptr1 = ptr2; 
+                ptr2 = ptr3; 
+            } 
+            if (ptr2 == mini) 
+                mini = ptr1; 
+            Fibonnaci_link(H,ptr2, ptr1); 
+            if (ptr1->right_sibling == ptr1) 
+                mini = ptr1; 
+            arr[temp1] = NULL; 
+            temp1++; 
+        } 
+        arr[temp1] = ptr1; 
+        ptr1 = ptr1->right_sibling; 
+    } while (ptr1 != mini); 
+    mini = NULL; 
+    for (int j = 0; j <= temp3; j++) { 
+        if (arr[j] != NULL) { 
+            arr[j]->left_sibling = arr[j]; 
+            arr[j]->right_sibling = arr[j]; 
+            if (mini != NULL) { 
+                (mini->left_sibling)->right_sibling = arr[j]; 
+                arr[j]->right_sibling = mini; 
+                arr[j]->left_sibling = mini->left_sibling; 
+                mini->left_sibling = arr[j]; 
+                if (arr[j]->key < mini->key) 
+                    mini = arr[j]; 
+            } 
+            else { 
+                mini = arr[j]; 
+            } 
+            if (mini == NULL) 
+                mini = arr[j]; 
+            else if (arr[j]->key < mini->key) 
+                mini = arr[j]; 
+        } 
+    } 
 } 
+  
 
-void fib_heap_link(FIB_HEAP *H, NODE *y, NODE *x)
+/*void fib_heap_link(FIB_HEAP *H, NODE *y, NODE *x)
 {
     y->right_sibling->left_sibling = y->left_sibling;
     y->left_sibling->right_sibling = y->right_sibling;
@@ -175,9 +235,27 @@ void fib_heap_link(FIB_HEAP *H, NODE *y, NODE *x)
             x->child = y; 
     }
     (x->degree)++;  
-}
-
-NODE *extract_min(FIB_HEAP *H)
+}*/
+void Fibonnaci_link(FIB_HEAP *H, NODE * ptr2, NODE * ptr1) 
+{ 
+    (ptr2->left_sibling)->right_sibling = ptr2->right_sibling; 
+    (ptr2->right_sibling)->left_sibling = ptr2->left_sibling; 
+    if (ptr1->right_sibling == ptr1) 
+        H->min = ptr1; 
+    ptr2->left_sibling = ptr2; 
+    ptr2->right_sibling = ptr2; 
+    ptr2->parent = ptr1; 
+    if (ptr1->child == NULL) 
+        ptr1->child = ptr2; 
+    ptr2->right_sibling = ptr1->child; 
+    ptr2->left_sibling = (ptr1->child)->left_sibling; 
+    ((ptr1->child)->left_sibling)->right_sibling = ptr2; 
+    (ptr1->child)->left_sibling = ptr2; 
+    if (ptr2->key < (ptr1->child)->key) 
+        ptr1->child = ptr2; 
+    ptr1->degree++; 
+} 
+/*NODE *extract_min(FIB_HEAP *H)
 {
     NODE *aux_node,*temp_child, *temp_child_next;
     aux_node = H->min;
@@ -225,8 +303,49 @@ NODE *extract_min(FIB_HEAP *H)
         printf("\n Fibanocci Heap is empty");
     }
     return aux_node;
-}
-
+}*/
+NODE *extract_min(FIB_HEAP * H) 
+{ 
+    //NODE * mini= H->min;
+    if (H->min == NULL) 
+        printf("\n The heap is empty"); 
+    else { 
+        NODE* temp = H->min; 
+        NODE* pntr; 
+        pntr = temp; 
+        NODE* x = NULL; 
+        printf("\n check 1");
+        if (temp->child != NULL) 
+        { 
+  
+            x = temp->child; 
+            do { 
+                pntr = x->right_sibling; 
+                (H->min->left_sibling)->right_sibling = x; 
+                x->right_sibling = H->min; 
+                x->left_sibling = H->min->left_sibling; 
+                H->min->left_sibling = x; 
+                if (x->key < H->min->key) 
+                    H->min = x; 
+                x->parent = NULL; 
+                x = pntr; 
+            } while (pntr != temp->child); 
+        }
+        printf("\n check 2"); 
+        (temp->left_sibling)->right_sibling = temp->right_sibling; 
+        (temp->right_sibling)->left_sibling = temp->left_sibling; 
+        H->min = temp->right_sibling; 
+        printf("\n check 3");
+        if (temp == temp->right_sibling && temp->child == NULL) 
+            H->min = NULL; 
+        else { 
+            H->min = temp->right_sibling; 
+            Consolidate(H); 
+             } 
+        H->n = H->n -1; 
+    } 
+    return H->min;
+} 
 void cut(FIB_HEAP *H, NODE *node_to_be_decreased, NODE * parent_node)
 {
     NODE *temp_parent_check;
