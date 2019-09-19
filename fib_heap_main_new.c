@@ -29,9 +29,10 @@ NODE *extract_min(FIB_HEAP *H); //extract the minimum node from the fibonacci he
 void consolidate(FIB_HEAP *H); //consolidating fibonacci heap
 void fib_heap_link(FIB_HEAP *H, NODE *y, NODE *x); //create link between parent and child
 NODE *find_min_node(FIB_HEAP *H); //minimum value will be returned from the fibonacci heap
-void decrease_key(FIB_HEAP *H,NODE *node, int key); // decrease the node in the fibonacci heap
+void decrease_key(FIB_HEAP * H,NODE *node, int key); // decrease the node in the fibonacci heap
 void cut(FIB_HEAP *H, NODE *node_to_be_decrease, NODE * parent_node); //cut the decreased node from its parent and add to root list
 void cascading_cut(FIB_HEAP *H, NODE *parent_node); //recusive procudure untill it find either root or 
+void Delete_Node(FIB_HEAP *H, int dec_key);
 
 FIB_HEAP *make_fib_heap() 
 {
@@ -43,23 +44,25 @@ FIB_HEAP *make_fib_heap()
     H->degree = 0;
     return H;
 }
-
-NODE *new_print_heap(NODE *x)
+void new_print_heap(NODE *n)
 {
-    x->visited = true;
-    if(x->child==NULL && x->parent == NULL)
-        printf("rootlist node = %d",x->key);
-    printf(" \n Node %d left = %d, right = %d \n", x->key,x->left_sibling->key, x->right_sibling->key);
-    if(x->child!=NULL)
-    {
-        printf("\n  Node %d left = %d, right = %d and child = %d \n", x->key,x->left_sibling->key, x->right_sibling->key, x->child->key);
-        x = new_print_heap(x->child);
+	NODE *x;
+for (x= n; ; x = x->right_sibling) 
+	{
+           
+            if( x->child == NULL)
+             {
+                printf("node with no child (%d) \n", x->key);
+            } else {
+            	//if(x->parent!=NULL)
+            		printf("NODE(%d) with child (%d)\n", x->key, x->child->key);
+                new_print_heap(x->child);
+            }
+            if(x->right_sibling == n) 
+            {
+                break;
+            }
     }
-    else if(x->right_sibling->visited!= true)
-    {
-        x = new_print_heap(x->right_sibling);
-    }
-    x->visited = false;
 }
 
 void insertion(FIB_HEAP *H,NODE *new, int val) 
@@ -134,8 +137,7 @@ int cal_degree(int n)
     }
     return count;
 }
-
-void consolidate(FIB_HEAP *H)
+ void consolidate(FIB_HEAP *H)
 {
     int degree,i,d;
     degree = cal_degree(H->n);
@@ -230,52 +232,49 @@ void fib_heap_link(FIB_HEAP *H, NODE *y, NODE *x)
     
     (x->degree)++;  
 }
-
-NODE *extract_min(FIB_HEAP *H)
-{
-    NODE *extracted_node;
-    if(H->min!=NULL)
-    {
-        NODE *aux_node, *temp_child;
-        aux_node = H->min; 
-        NODE *tc_right; 
-        tc_right = aux_node; 
-        temp_child = NULL; 
-        if (aux_node->child != NULL) 
+NODE *extract_min(FIB_HEAP * H) 
+{ 
+    
+    if (H->min == NULL) 
+        printf("\n The heap is empty"); 
+    else { 
+        NODE* temp = H->min; 
+        NODE* pntr; 
+        pntr = temp; 
+        NODE* x = NULL; 
+        //printf("\n check 1");
+        if (temp->child != NULL) 
         { 
-            temp_child = aux_node->child; 
+  
+            x = temp->child; 
             do { 
-                tc_right = temp_child->right_sibling; 
-                (H->min->left_sibling)->right_sibling = temp_child; 
-                temp_child->right_sibling = H->min; 
-                temp_child->left_sibling = H->min->left_sibling; 
-                H->min->left_sibling = temp_child; 
-                if (temp_child->key < H->min->key) 
-                    H->min = temp_child; 
-                temp_child->parent = NULL; 
-                temp_child = tc_right; 
-            } while(tc_right != aux_node->child); 
-        }        
-        aux_node->left_sibling->right_sibling = aux_node->right_sibling;
-        aux_node->right_sibling->left_sibling = aux_node->left_sibling;
-        if(aux_node == aux_node->right_sibling && aux_node->child == NULL)
-        {
-            H->min = NULL;
+                pntr = x->right_sibling; 
+                (H->min->left_sibling)->right_sibling = x; 
+                x->right_sibling = H->min; 
+                x->left_sibling = H->min->left_sibling; 
+                H->min->left_sibling = x; 
+                if (x->key < H->min->key) 
+                    H->min = x; 
+                x->parent = NULL; 
+                x = pntr; 
+            } while (pntr != temp->child); 
         }
-        else
-        {
-            H->min = aux_node->right_sibling;
-            consolidate(H);
-        }
-        (H->n)--; 
-        return aux_node;
-    }
-    else
-    {
-        printf("\n Fibanocci Heap is empty \n");
-        return NULL;
-    }
-}
+        //printf("\n check 2"); 
+        (temp->left_sibling)->right_sibling = temp->right_sibling; 
+        (temp->right_sibling)->left_sibling = temp->left_sibling; 
+        H->min = temp->right_sibling; 
+       // printf("\n check 3");
+        if (temp == temp->right_sibling && temp->child == NULL) 
+            H->min = NULL; 
+        else { 
+            H->min = temp->right_sibling; 
+            consolidate(H); 
+             } 
+        H->n = H->n -1; 
+        return temp;
+    } 
+    return H->min;
+} 
 
 void cut(FIB_HEAP *H, NODE *node_to_be_decrease, NODE * parent_node)
 {
@@ -322,18 +321,24 @@ void cascading_cut(FIB_HEAP *H, NODE *parent_node)
     }
 }
 
-void decrease_key(FIB_HEAP *H, NODE *node_to_be_decrease, int new_key)
+void decrease_key(FIB_HEAP * H,NODE *node_to_be_decrease, int new_key)
 {
     NODE *parent_node;
     if(H == NULL)
     {
         printf("\n FIbonacci heap not created ");
+        return;
     }
+    if(node_to_be_decrease == NULL)
+    	{printf("Node is not in the heap");//return 0;
+}
+    
     else
     {
         if(node_to_be_decrease->key < new_key)
         {
             printf("\n Invalid new key for decrease key operation \n ");
+          //  return 0;
         }
         else
         {
@@ -352,24 +357,29 @@ void decrease_key(FIB_HEAP *H, NODE *node_to_be_decrease, int new_key)
             }
         }
     }
+   // return 1;
 }
 
-NODE *find_node(NODE *find_use, int key)
+void *find_node(FIB_HEAP *H,NODE *n, int key,int new_key)
 {
+	NODE * find_use=n;
+	NODE *f=NULL;
     find_use->visited = true;
     if(find_use->key == key)
     {
         find_use->visited = false;
-        return find_use;
+        f=find_use;
+        decrease_key(H,f,new_key);
     }
-    else if(find_use->child!=NULL)
-    {
-        find_use = find_node(find_use->child, key);
-    }
-    else if(find_use->right_sibling->visited!= true)
-    {
-        find_use = find_node(find_use->right_sibling, key);
-    }
+      if(find_use->child!=NULL)
+	    {
+	        find_node(H,find_use->child, key,new_key);
+	    }
+	    if((find_use->right_sibling->visited!= true))
+	    {
+	        find_node(H,find_use->right_sibling, key,new_key);
+	    }
+	
     find_use->visited = false;
     
 }
@@ -397,6 +407,16 @@ FIB_HEAP *insertion_procedure()
     }
     return temp;
 }
+void Delete_Node(FIB_HEAP * H,int dec_key)
+{ 
+    NODE* p=NULL;
+find_node(H,H->min,dec_key,-5000);
+	p=extract_min(H);
+if(p!=NULL)
+ printf("\n Node deleted");
+else
+    printf("\n Node not deleted:some error");
+}
 
 int main(int argc, char **argv)
 {
@@ -408,7 +428,7 @@ int main(int argc, char **argv)
     while(1)
     {
         printf(" \n *********** Fibonacci Heap and its Functions *************** / \n ");
-        printf(" \n choose below operations \n 1. Create Fibonacci heap \n 2. Insert nodes into fibonacci heap \n 3. Find min \n 4. Union \n 5. Extract min \n 6. Decrease key \n 7. print heap \n 8. exit \n enter operation_no = ");
+        printf(" \n choose below operations \n 1. Create Fibonacci heap \n 2. Insert nodes into fibonacci heap \n 3. Find min \n 4. Union \n 5. Extract min \n 6. Decrease key \n 7.Delete node \n 8. print heap \n 9. exit \n enter operation_no = ");
         scanf("%d", &operation_no);
 
         switch (operation_no)
@@ -444,6 +464,8 @@ int main(int argc, char **argv)
                 }
                 h1 = insertion_procedure();
                 heap = unionHeap(heap, h1);
+                printf("Unified Heap:\n");
+                new_print_heap(heap->min);
                 break;
 
         case 5: /* Extract min in Fibanocci Heap */
@@ -453,6 +475,8 @@ int main(int argc, char **argv)
                 {
                     extracted_min = extract_min(heap);
                     printf("\n min value = %d",extracted_min->key);
+                    printf("\n Updated heap: \n");
+                    new_print_heap(heap->min);
                 }
                 break;
 
@@ -460,25 +484,31 @@ int main(int argc, char **argv)
                     printf("Fibonacci heap is empty");
                 else
                 {
-                    printf(" node to be decreased = ");
+                    printf(" \n node to be decreased = ");
                     scanf("%d", &dec_key);
-                    find_use = heap->min;
-                    node_to_be_decrease = find_node(find_use, dec_key);
-                    if(node_to_be_decrease== NULL)
-                        printf("\n node not found ");
-                    else
-                    {
-                        printf("\n=======node found = %d ========", node_to_be_decrease->key);
-                        printf(" enter the new key = ");
+                     printf(" \n enter the new key = ");
                         scanf("%d", &new_key);
-                        decrease_key(heap, node_to_be_decrease, new_key);
-                    }
+                    find_use = heap->min;
+                    find_node(heap,find_use, dec_key,new_key);
+                    printf("\n Key decreased- Corresponding heap:\n");
+                    new_print_heap(heap->min);
+                    
                 }
                 break;
-        case 7: new_print_heap(heap->min);  /*  Display Fib Heap */
+        case 7:if(heap == NULL)
+                    printf("Fibonacci heap is empty");
+                    else{
+                    	printf(" \n Enter node key to be deleted = ");
+                    scanf("%d", &dec_key);
+                    	Delete_Node(heap,dec_key);
+        		printf("\n Node Deleted- Corresponding heap:\n");
+                new_print_heap(heap->min);
+                break;
+            }
+        case 8: new_print_heap(heap->min);  /*  Display Fib Heap */
                 break;
 
-        case 8: free(new_node);
+        case 9: free(new_node);
                 free(heap);
                 exit(0);
 
