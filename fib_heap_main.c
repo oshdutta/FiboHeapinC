@@ -83,14 +83,13 @@ NODE *find_min_node(FIB_HEAP *H)
     void Consolidate(FIB_HEAP *H) 
 { 
     int temp1;
-    NODE * mini=H->min;
     int no_of_nodes= H->n;
     float temp2 = (log(no_of_nodes)) / (log(2)); 
     int temp3 = temp2; 
     NODE * arr[temp3]; 
     for (int i = 0; i <= temp3; i++) 
         arr[i] = NULL; 
-    NODE* ptr1 = mini; 
+    NODE* ptr1 = H->min; 
     NODE* ptr2; 
     NODE* ptr3; 
     NODE* ptr4 = ptr1; 
@@ -104,37 +103,37 @@ NODE *find_min_node(FIB_HEAP *H)
                 ptr1 = ptr2; 
                 ptr2 = ptr3; 
             } 
-            if (ptr2 == mini) 
-                mini = ptr1; 
+            if (ptr2 == H->min) 
+                H->min = ptr1; 
             Fibonnaci_link(H,ptr2, ptr1); 
             if (ptr1->right_sibling == ptr1) 
-                mini = ptr1; 
+                H->min = ptr1; 
             arr[temp1] = NULL; 
             temp1++; 
         } 
         arr[temp1] = ptr1; 
         ptr1 = ptr1->right_sibling; 
-    } while (ptr1 != mini); 
-    mini = NULL; 
+    } while (ptr1 != H->min); 
+    H->min = NULL; 
     for (int j = 0; j <= temp3; j++) { 
         if (arr[j] != NULL) { 
             arr[j]->left_sibling = arr[j]; 
             arr[j]->right_sibling = arr[j]; 
-            if (mini != NULL) { 
-                (mini->left_sibling)->right_sibling = arr[j]; 
-                arr[j]->right_sibling = mini; 
-                arr[j]->left_sibling = mini->left_sibling; 
-                mini->left_sibling = arr[j]; 
-                if (arr[j]->key < mini->key) 
-                    mini = arr[j]; 
+            if (H->min != NULL) { 
+                (H->min->left_sibling)->right_sibling = arr[j]; 
+                arr[j]->right_sibling = H->min; 
+                arr[j]->left_sibling = H->min->left_sibling; 
+                H->min->left_sibling = arr[j]; 
+                if (arr[j]->key < H->min->key) 
+                    H->min = arr[j]; 
             } 
             else { 
-                mini = arr[j]; 
+                H->min = arr[j]; 
             } 
-            if (mini == NULL) 
-                mini = arr[j]; 
-            else if (arr[j]->key < mini->key) 
-                mini = arr[j]; 
+            if (H->min == NULL) 
+                H->min = arr[j]; 
+            else if (arr[j]->key < H->min->key) 
+                H->min = arr[j]; 
         } 
     } 
 } 
@@ -199,6 +198,7 @@ NODE *extract_min(FIB_HEAP * H)
             Consolidate(H); 
              } 
         H->n = H->n -1; 
+        return temp;
     } 
     return H->min;
 } 
