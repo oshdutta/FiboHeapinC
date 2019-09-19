@@ -27,7 +27,7 @@ void insertion(FIB_HEAP *H,NODE *new, int val);
 NODE *extract_min(FIB_HEAP *H);
 void Consolidate(FIB_HEAP *H);
 //void fib_heap_link(FIB_HEAP *H, NODE *y, NODE *x);
-void Fibonnaci_link(FIB_HEAP *H, NODE * ptr2, NODE * ptr1) ;
+void Fibonnaci_link(FIB_HEAP *H, NODE * temp2, NODE * temp1) ;
 NODE *find_min_node(FIB_HEAP *H);
 int decrease_key(FIB_HEAP *H,NODE *node, int key);
 void cut(FIB_HEAP *H, NODE *node_to_be_decreased, NODE * parent_node);
@@ -88,31 +88,31 @@ NODE *find_min_node(FIB_HEAP *H)
     NODE * arr[deg]; 
     for (int i = 0; i <= deg; i++) 
         arr[i] = NULL; 
-    NODE* ptr1 = H->min; 
-    NODE* ptr2; 
-    NODE* ptr3; 
-    NODE* ptr4 = ptr1; 
+    NODE* temp1 = H->min; 
+    NODE* temp2; 
+    NODE* temp3; 
+    NODE* ptr4 = temp1; 
     do { 
         ptr4 = ptr4->right_sibling; 
-        tempdeg = ptr1->degree; 
+        tempdeg = temp1->degree; 
         while (arr[tempdeg] != NULL) { 
-            ptr2 = arr[tempdeg]; 
-            if (ptr1->key > ptr2->key) { 
-                ptr3 = ptr1; 
-                ptr1 = ptr2; 
-                ptr2 = ptr3; 
+            temp2 = arr[tempdeg]; 
+            if (temp1->key > temp2->key) { 
+                temp3 = temp1; 
+                temp1 = temp2; 
+                temp2 = temp3; 
             } 
-            if (ptr2 == H->min) 
-                H->min = ptr1; 
-            Fibonnaci_link(H,ptr2, ptr1); 
-            if (ptr1->right_sibling == ptr1) 
-                H->min = ptr1; 
+            if (temp2 == H->min) 
+                H->min = temp1; 
+            Fibonnaci_link(H,temp2, temp1); 
+            if (temp1->right_sibling == temp1) 
+                H->min = temp1; 
             arr[tempdeg] = NULL; 
             tempdeg++; 
         } 
-        arr[tempdeg] = ptr1; 
-        ptr1 = ptr1->right_sibling; 
-    } while (ptr1 != H->min); 
+        arr[tempdeg] = temp1; 
+        temp1 = temp1->right_sibling; 
+    } while (temp1 != H->min); 
     H->min = NULL; 
     for (int j = 0; j <= deg; j++) { 
         if (arr[j] != NULL) { 
@@ -138,24 +138,24 @@ NODE *find_min_node(FIB_HEAP *H)
 } 
   
 
-void Fibonnaci_link(FIB_HEAP *H, NODE * ptr2, NODE * ptr1) 
+void Fibonnaci_link(FIB_HEAP *H, NODE * temp2, NODE * temp1) 
 { 
-    (ptr2->left_sibling)->right_sibling = ptr2->right_sibling; 
-    (ptr2->right_sibling)->left_sibling = ptr2->left_sibling; 
-    if (ptr1->right_sibling == ptr1) 
-        H->min = ptr1; 
-    ptr2->left_sibling = ptr2; 
-    ptr2->right_sibling = ptr2; 
-    ptr2->parent = ptr1; 
-    if (ptr1->child == NULL) 
-        ptr1->child = ptr2; 
-    ptr2->right_sibling = ptr1->child; 
-    ptr2->left_sibling = (ptr1->child)->left_sibling; 
-    ((ptr1->child)->left_sibling)->right_sibling = ptr2; 
-    (ptr1->child)->left_sibling = ptr2; 
-    if (ptr2->key < (ptr1->child)->key) 
-        ptr1->child = ptr2; 
-    ptr1->degree++; 
+    (temp2->left_sibling)->right_sibling = temp2->right_sibling; 
+    (temp2->right_sibling)->left_sibling = temp2->left_sibling; 
+    if (temp1->right_sibling == temp1) 
+        H->min = temp1; 
+    temp2->left_sibling = temp2; 
+    temp2->right_sibling = temp2; 
+    temp2->parent = temp1; 
+    if (temp1->child == NULL) 
+        temp1->child = temp2; 
+    temp2->right_sibling = temp1->child; 
+    temp2->left_sibling = (temp1->child)->left_sibling; 
+    ((temp1->child)->left_sibling)->right_sibling = temp2; 
+    (temp1->child)->left_sibling = temp2; 
+    if (temp2->key < (temp1->child)->key) 
+        temp1->child = temp2; 
+    temp1->degree++; 
 } 
 
 NODE *extract_min(FIB_HEAP * H) 
