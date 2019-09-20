@@ -54,7 +54,7 @@ for (x= n; ; x = x->right_sibling)
              {
                 printf("node with no child (%d) \n", x->key);
             } else {
-            	//if(x->parent!=NULL)
+            	
             		printf("NODE(%d) with child (%d)\n", x->key, x->child->key);
                 new_print_heap(x->child);
             }
