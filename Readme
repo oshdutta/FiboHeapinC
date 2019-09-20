@@ -1,2 +1,4 @@
 Implementation of Fibonacci heaps using C
 #assingment 
+fibo_heap_mult.c -> attempts to work with mutliple heaps at once
+fibo_heap.c ->attempts to put rogether all the major functions of managing a fibonacci heap
